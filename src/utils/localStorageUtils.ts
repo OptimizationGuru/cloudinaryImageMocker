@@ -8,18 +8,18 @@ export interface DataEntry {
 
 export const LOCAL_STORAGE_KEY = 'mockData';
 
-export function saveData(data: DataEntry[]): void {
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+export function saveData(key: string, data: DataEntry[]): void {
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
-export function loadData(): DataEntry[] {
-  const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+export function loadData(key: string): DataEntry[] {
+  const data = localStorage.getItem(key);
   return data ? JSON.parse(data) : [];
 }
 
 // Initialize localStorage with default data if empty
-export function initializeData(initialData: DataEntry[]): void {
-  if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
-    saveData(initialData);
+export function initializeData(key: string, initialData: DataEntry[]): void {
+  if (!localStorage.getItem(key)) {
+    saveData(key, initialData);
   }
 }

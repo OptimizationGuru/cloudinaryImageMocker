@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '../Card/index';
 import useFetchImages from '../../hooks/useFetchImages';
-import Spinner, { Spinnerr } from '../Spinner';
+import Spinnerr from '../Spinner';
 
 interface ZoomedCardProps {
   cardProps: {
@@ -50,7 +50,7 @@ const ZoomedCard: React.FC<ZoomedCardProps> = ({
   if (loading || !imageData) {
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
-        <Spinnerr />
+        <Spinnerr isSaving={false} />
       </div>
     );
   }
