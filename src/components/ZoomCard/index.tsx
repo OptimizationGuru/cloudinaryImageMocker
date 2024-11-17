@@ -1,19 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '../Card/index';
+import useFetchImages from '../../hooks/useFetchImages';
+import Spinner, { Spinnerr } from '../Spinner';
 
 interface ZoomedCardProps {
   cardProps: {
     publicId: string;
     width: number;
     height: number;
-    alt: string;
+    alt?: string;
     title: string;
     onClick?: () => void;
   };
+  position: number;
   onClose: () => void;
 }
 
-const ZoomedCard: React.FC<ZoomedCardProps> = ({ cardProps, onClose }) => {
+const ZoomedCard: React.FC<ZoomedCardProps> = ({
+  cardProps,
+  onClose,
+  position,
+}) => {
+  const { images, loading } = useFetchImages({ position });
+
+  const [imageData, setImageData] = useState<any>(null);
+
+  // Update cardProps with the first image once it is fetched
+  useEffect(() => {
+    if (images && images.length > 0) {
+      setImageData(images[0]);
+      cardProps.publicId = images[0]?.publicId;
+    }
+  }, [images, cardProps]);
+
   useEffect(() => {
     const handleEscPress = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -27,6 +46,14 @@ const ZoomedCard: React.FC<ZoomedCardProps> = ({ cardProps, onClose }) => {
       window.removeEventListener('keydown', handleEscPress);
     };
   }, [onClose]);
+
+  if (loading || !imageData) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
+        <Spinnerr />
+      </div>
+    );
+  }
 
   return (
     <div

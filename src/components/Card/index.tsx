@@ -4,7 +4,7 @@ interface CardProps {
   publicId: string;
   width: number;
   height: number;
-  alt: string;
+  alt?: string;
   title: string;
   onClick?: () => void;
 }

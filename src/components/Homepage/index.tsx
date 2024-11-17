@@ -1,33 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Card } from '../Card';
 import ZoomedCard from '../ZoomCard';
 import { reorder } from '../../utils/dragAndDropHelper';
-import data from '../../data/document.json';
+import data from '../../data/thumbnails.json';
+import { thumbnailHeight, thumbnailWidth } from '../../constants';
+import updateDimensions from '../../utils/updateImageDimensions';
 
 const HomePage: React.FC = () => {
   const [documents, setDocuments] = useState(data);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedCardTitle, setSelectedCardTitle] = useState<null | string>(
     null
   );
-
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  // Function to update the image size based on window size
-  const updateDimensions = () => {
-    const screenWidth = window.innerWidth;
-    let width = screenWidth * 0.8;
-    let height = width * 0.75; // Maintain aspect ratio (3:4)
-
-    if (width > 1200) width = 1200;
-    if (height > 900) height = 900;
-
-    setDimensions({ width, height });
-  };
-
   useEffect(() => {
-    updateDimensions();
+    const { width, height } = updateDimensions();
+    setDimensions({ width, height });
     window.addEventListener('resize', updateDimensions);
 
     return () => window.removeEventListener('resize', updateDimensions);
@@ -44,18 +34,15 @@ const HomePage: React.FC = () => {
   };
 
   const setCardData = ({
-    publicId,
+    position,
     title,
   }: {
-    publicId: string;
+    position: number;
     title: string;
   }) => {
-    setSelectedImage(publicId);
+    setSelectedImage(position);
     setSelectedCardTitle(title);
   };
-
-  const thumbnailWidth = 250;
-  const thumbnailHeight = 250;
 
   return (
     <div className="w-screen h-screen min-h-screen border-black border-[4px] p-4">
@@ -92,7 +79,7 @@ const HomePage: React.FC = () => {
                           height={thumbnailHeight}
                           alt={'thumbnail'}
                           onClick={() => {
-                            setSelectedImage(doc.publicId);
+                            setSelectedImage(doc.position);
                           }}
                         />
                       </div>
@@ -116,7 +103,7 @@ const HomePage: React.FC = () => {
                         {...provided.dragHandleProps}
                         className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
                         onClick={() => {
-                          setSelectedImage(doc.publicId);
+                          setSelectedImage(doc.position);
                         }}
                       >
                         <Card
@@ -126,7 +113,7 @@ const HomePage: React.FC = () => {
                           height={thumbnailHeight}
                           alt={'thumbnail'}
                           onClick={() => {
-                            setSelectedImage(doc.publicId);
+                            setSelectedImage(doc.position);
                           }}
                         />
                       </div>
@@ -143,13 +130,14 @@ const HomePage: React.FC = () => {
       {selectedImage && (
         <ZoomedCard
           cardProps={{
-            publicId: selectedImage,
+            publicId: String(selectedImage),
             width: dimensions.width,
             height: dimensions.height,
             alt: selectedCardTitle || '',
             title: selectedCardTitle || '',
           }}
           onClose={() => setSelectedImage(null)}
+          position={selectedImage}
         />
       )}
     </div>
