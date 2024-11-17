@@ -16,6 +16,7 @@ export const Card: React.FC<CardProps> = ({
   alt,
   title,
 }) => {
+  // Cloudinary Configurations, Images are sourced at Cloudinary Server
   const cloudName = 'dbkhw9ib9';
   const optimizedUrl = `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,w_${width},h_${height},q_75,f_webp/${publicId}.webp`;
 
@@ -28,7 +29,7 @@ export const Card: React.FC<CardProps> = ({
           width={width}
           height={height}
           className="object-cover rounded-md"
-          loading='lazy'
+          loading="lazy"
         />
       </div>
       <p className="text-center text-sm font-semibold text-gray-800">{title}</p>
