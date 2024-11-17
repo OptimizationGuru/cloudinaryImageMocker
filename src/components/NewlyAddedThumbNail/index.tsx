@@ -4,16 +4,16 @@ import ZoomedCard from '../ZoomCard';
 import { thumbnailHeight, thumbnailWidth } from '../../constants';
 import updateDimensions from '../../utils/updateImageDimensions';
 import Spinnerr from '../Spinner';
-import useFetchNewlyAddedThumbnails from '../../hooks/useFetchNewlyAddedThumbnails';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/thumbnails';
 
-interface NewThumbnailsProps {
-  refresh: number;
-}
+const NewThumbnails: React.FC = () => {
+  const { thumbnails, loading } = useSelector(
+    (state: RootState) => state.thumbnail
+  );
 
-const NewThumbnails: React.FC<NewThumbnailsProps> = ({ refresh }) => {
-  const { images, loading } = useFetchNewlyAddedThumbnails();
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [allImages, setAllImages] = useState(images);
+  const [allImages, setAllImages] = useState(thumbnails);
 
   const [selectedCardTitle, setSelectedCardTitle] = useState<string | null>(
     null
@@ -27,10 +27,10 @@ const NewThumbnails: React.FC<NewThumbnailsProps> = ({ refresh }) => {
     const { width, height } = updateDimensions();
     setDimensions({ width, height });
     window.addEventListener('resize', updateDimensions);
-    setAllImages(images);
+    setAllImages(thumbnails);
 
     return () => window.removeEventListener('resize', updateDimensions);
-  }, [images]);
+  }, [thumbnails]);
 
   const setCardData = ({
     position,
@@ -52,11 +52,8 @@ const NewThumbnails: React.FC<NewThumbnailsProps> = ({ refresh }) => {
   }
 
   return (
-    images && (
-      <div
-        key={refresh}
-        className="shadow-xl w-screen h-auto min-h-screen  flex flex-col items-center justify-center"
-      >
+    thumbnails && (
+      <div className="shadow-xl w-screen h-auto min-h-screen  flex flex-col items-center justify-center">
         <div className="text-xl text-white rounded-lg bg-transparent bg-gradient-to-r from-blue-700 to-red-500 px-4 py-2">
           Newly Added
         </div>

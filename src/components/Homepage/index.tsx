@@ -11,17 +11,13 @@ import { throttle } from 'lodash';
 import useFetchThumbnails, {
   ThumbnailData,
 } from '../../hooks/useFetchThumbnails';
-import useFetchNewlyAddedThumbnails from '../../hooks/useFetchNewlyAddedThumbnails';
+import { useDispatch } from 'react-redux';
+import { addNewThumbnail } from '../../store/thumbnailSlice';
 
-interface HomePageProps {
-  notifyParent: (message: string, thumbnail: any) => void; // Prop definition
-}
-
-const HomePage: React.FC<HomePageProps> = ({ notifyParent }) => {
+const HomePage: React.FC = () => {
+  const dispatch = useDispatch();
   let thumbnailsToAdd: ThumbnailData[] = [];
   const { images, loading } = useFetchThumbnails();
-
-  const { addNewThumbnails } = useFetchNewlyAddedThumbnails();
 
   const [documents, setDocuments] = useState<ThumbnailData[]>([]);
   const [thumbnails_, setThumbnails_] = useState<ThumbnailData[]>(data);
@@ -57,13 +53,12 @@ const HomePage: React.FC<HomePageProps> = ({ notifyParent }) => {
         thumbnailsToAdd.push(thumbnails[i]);
       }
 
-      addNewThumbnails(thumbnailsToAdd);
+      dispatch(addNewThumbnail(thumbnailsToAdd));
       setThumbnails_((prev) => {
         const updatedThumbnails = prev.slice(0, -1);
         return updatedThumbnails;
       });
 
-      notifyParent('refresh', thumbnails_);
       clickCount = 0;
     },
     delay,

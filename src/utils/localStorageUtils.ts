@@ -1,6 +1,5 @@
 import { ThumbnailData } from '../hooks/useFetchThumbnails';
 
-// Type definition for data entries
 export interface DataEntry {
   type: string;
   title: string;
@@ -20,7 +19,6 @@ export function loadData(key: string): ThumbnailData[] {
   return data ? (JSON.parse(data) as ThumbnailData[]) : [];
 }
 
-// Initialize localStorage with default data if empty
 export function initializeData(
   key: string,
   initialData: ThumbnailData[]

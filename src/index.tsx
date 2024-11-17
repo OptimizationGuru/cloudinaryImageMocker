@@ -3,9 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import store from './store/thumbnails';
+import { Provider } from 'react-redux';
 
 const Index: React.FC = () => {
-  return <App />;
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
 };
 
 const root = ReactDOM.createRoot(
