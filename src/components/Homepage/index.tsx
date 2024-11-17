@@ -1,24 +1,30 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Card } from '../Card';
 import ZoomedCard from '../ZoomCard';
 import { reorder } from '../../utils/dragAndDropHelper';
-import data from '../../data/thumbnails.json';
+import data from '../../data/newthumbnails.json';
 import { delay, thumbnailHeight, thumbnailWidth } from '../../constants';
 import updateDimensions from '../../utils/updateImageDimensions';
-import ThumbnailContext from '../../useContext/Thumbnails';
-import useAddThumbnail from '../../hooks/useAddNewImages';
 import Spinnerr from '../Spinner';
 import { throttle } from 'lodash';
+import useFetchThumbnails, {
+  ThumbnailData,
+} from '../../hooks/useFetchThumbnails';
+import useFetchNewlyAddedThumbnails from '../../hooks/useFetchNewlyAddedThumbnails';
 
-const HomePage: React.FC = () => {
-  const { thumbnails } = useContext(ThumbnailContext);
+interface HomePageProps {
+  notifyParent: (message: string, thumbnail: any) => void; // Prop definition
+}
 
-  console.log(thumbnails, 'thumbnailss');
+const HomePage: React.FC<HomePageProps> = ({ notifyParent }) => {
+  let thumbnailsToAdd: ThumbnailData[] = [];
+  const { images, loading } = useFetchThumbnails();
 
-  const { addThumbnail, loading, error, success } = useAddThumbnail();
+  const { addNewThumbnails } = useFetchNewlyAddedThumbnails();
 
-  const [documents, setDocuments] = useState(data);
+  const [documents, setDocuments] = useState<ThumbnailData[]>([]);
+  const [thumbnails_, setThumbnails_] = useState<ThumbnailData[]>(data);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedCardTitle, setSelectedCardTitle] = useState<null | string>(
     null
@@ -46,12 +52,18 @@ const HomePage: React.FC = () => {
   let clickCount = 0;
 
   const throttledAddThumbnail = throttle(
-    (data: any) => {
-      const thumbnailsToAdd = [];
+    (thumbnails: any) => {
       for (let i = 0; i < clickCount; i++) {
-        thumbnailsToAdd.push(data);
+        thumbnailsToAdd.push(thumbnails[i]);
       }
-      addThumbnail(thumbnailsToAdd);
+
+      addNewThumbnails(thumbnailsToAdd);
+      setThumbnails_((prev) => {
+        const updatedThumbnails = prev.slice(0, -1);
+        return updatedThumbnails;
+      });
+
+      notifyParent('refresh', thumbnails_);
       clickCount = 0;
     },
     delay,
@@ -59,8 +71,8 @@ const HomePage: React.FC = () => {
   );
 
   const handleClick = () => {
-    clickCount++;
-    throttledAddThumbnail(data[Math.max(clickCount, 4)]);
+    ++clickCount;
+    throttledAddThumbnail(thumbnails_);
   };
 
   const setCardData = ({
@@ -73,6 +85,10 @@ const HomePage: React.FC = () => {
     setSelectedImage(position);
     setSelectedCardTitle(title);
   };
+
+  useEffect(() => {
+    setDocuments(images);
+  }, [images]);
 
   if (loading) {
     return (
@@ -87,7 +103,7 @@ const HomePage: React.FC = () => {
       <button
         id="saveButton"
         type="button"
-        className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mx-auto block"
+        className="text-white text-xl bg-transparent bg-gradient-to-r from-blue-700 to-red-500  focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg  px-5 py-2.5 text-center mx-auto block"
         onClick={handleClick}
       >
         Add Thumbnail

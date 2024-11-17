@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '../Card/index';
-import useFetchImages from '../../hooks/useFetchImages';
+import useFetchImages from '../../hooks/useFetchImageByPosition';
 import Spinnerr from '../Spinner';
+import { ThumbnailData } from '../../hooks/useFetchThumbnails';
 
 interface ZoomedCardProps {
   cardProps: {
@@ -23,9 +24,8 @@ const ZoomedCard: React.FC<ZoomedCardProps> = ({
 }) => {
   const { images, loading } = useFetchImages({ position });
 
-  const [imageData, setImageData] = useState<any>(null);
+  const [imageData, setImageData] = useState<ThumbnailData | null>(null);
 
-  // Update cardProps with the first image once it is fetched
   useEffect(() => {
     if (images && images.length > 0) {
       setImageData(images[0]);
