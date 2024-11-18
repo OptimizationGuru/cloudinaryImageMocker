@@ -55,7 +55,7 @@ const HomePage: React.FC = () => {
   const throttledAddThumbnail = throttle(
     async (thumbnails: ThumbnailData[], dispatch: AppDispatch) => {
       const thumbnailsToAdd: ThumbnailData[] = [];
-      for (let i = initialCount; i <= clickCount; i++) {
+      for (let i = initialCount; i < clickCount; i++) {
         thumbnailsToAdd.push(thumbnails[i]);
       }
 
