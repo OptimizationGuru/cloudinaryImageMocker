@@ -96,7 +96,7 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <div className="w-full min-h-screen p-4">
+    <div className="w-screen h-auto p-4">
       <button
         id="saveButton"
         type="button"
@@ -112,7 +112,7 @@ const HomePage: React.FC = () => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="grid gap-4 justify-center items-center w-full sm:grid-cols-2 lg:grid-cols-3"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 p-4 mx-auto w-full"
             >
               {documents.map((doc, index) => (
                 <Draggable key={doc.type} draggableId={doc.type} index={index}>
@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
+                      className="flex justify-center items-center p-1 shadow-md bg-gray-300 w-[250px] rounded-lg mx-auto"
                       onClick={() => setCardData(doc)}
                     >
                       <Card
@@ -129,7 +129,8 @@ const HomePage: React.FC = () => {
                         publicId={doc.publicId}
                         width={thumbnailWidth}
                         height={thumbnailHeight}
-                        alt={'thumbnail'}
+                        alt="thumbnail"
+                        className="w-full max-w-[400px] h-auto border rounded-md shadow-md transition-transform duration-300 ease-in-out hover:scale-105"
                       />
                     </div>
                   )}

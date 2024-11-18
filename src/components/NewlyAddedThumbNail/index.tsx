@@ -63,7 +63,7 @@ const NewThumbnails: React.FC = () => {
         {allImages.map((doc) => (
           <div
             key={doc?.type}
-            className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
+            className="flex justify-center items-center p-1 shadow-md bg-gray-300 w-[250px] rounded-lg mx-auto cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
             onClick={() => setCardData({ doc })}
           >
             <Card

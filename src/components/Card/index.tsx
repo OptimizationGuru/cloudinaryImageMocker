@@ -6,6 +6,7 @@ interface CardProps {
   height: number;
   alt?: string;
   title: string;
+  className?: string;
   onClick?: () => void;
 }
 
@@ -15,14 +16,17 @@ export const Card: React.FC<CardProps> = ({
   height,
   alt,
   title,
+  className,
 }) => {
   // Cloudinary Configurations, Images are sourced at Cloudinary Server
   const cloudName = 'dbkhw9ib9';
   const optimizedUrl = `https://res.cloudinary.com/${cloudName}/image/upload/c_scale,w_${width},h_${height},q_75,f_webp/${publicId}.webp`;
 
   return (
-    <div className="max-w-[90%]  w-full flex flex-col items-center bg-white shadow-lg rounded-lg p-4 hover:shadow-2xl transition-shadow duration-300">
-      <div className="w-auto h-auto flex justify-center mb-4">
+    <div className="max-w-[80%] w-full flex flex-col items-center rounded-lg px-4 py-5  transition-shadow duration-300">
+      <div
+        className={`p-4 bg-white border border-gray-300 rounded ${className}`}
+      >
         <img
           src={optimizedUrl}
           alt={alt}
@@ -32,7 +36,7 @@ export const Card: React.FC<CardProps> = ({
           loading="lazy"
         />
       </div>
-      <p className="text-center text-sm font-semibold text-gray-800">{title}</p>
+      <p className="text-center text-sm font-semibold text-gray-800 pt-2">{title}</p>
     </div>
   );
 };
