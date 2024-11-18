@@ -1,12 +1,26 @@
 import { useState, useEffect } from 'react';
-import { loadData } from '../utils/localStorageUtils';
-import { fullImages } from '../constants';
+import {
+  initializeData,
+  loadData,
+  loadDataFromLocal,
+} from '../utils/localStorageUtils';
 import { ThumbnailData } from './useFetchThumbnails';
+import { newthumbnailImages } from '../constants';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/thumbnails';
 
-const useFetchImages = ({ position }: { position: number }) => {
+const useFetchImages = ({
+  position,
+  searchKey,
+}: {
+  position: number;
+  searchKey: string;
+}) => {
   const [images, setImages] = useState<ThumbnailData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { thumbnails } = useSelector((state: RootState) => state.thumbnail);
 
   interface ApiResponse<T> {
     status: number;
@@ -17,10 +31,17 @@ const useFetchImages = ({ position }: { position: number }) => {
   const fetchImagesbyPositionApi = (): Promise<
     ApiResponse<ThumbnailData[]>
   > => {
+    initializeData(newthumbnailImages, thumbnails);
     return new Promise((resolve, reject) => {
+      let data: any;
       setTimeout(() => {
         try {
-          const data = loadData(fullImages);
+          if (searchKey === newthumbnailImages) {
+            data = loadDataFromLocal(searchKey);
+          } else {
+            data = loadData(searchKey);
+          }
+
           resolve({
             status: 200,
             message: 'Images retrieved successfully',

@@ -3,8 +3,12 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Card } from '../Card';
 import ZoomedCard from '../ZoomCard';
 import { reorder } from '../../utils/dragAndDropHelper';
-import data from '../../data/newthumbnails.json';
-import { delay, thumbnailHeight, thumbnailWidth } from '../../constants';
+import {
+  delay,
+  fullImages,
+  thumbnailHeight,
+  thumbnailWidth,
+} from '../../constants';
 import updateDimensions from '../../utils/updateImageDimensions';
 import Spinnerr from '../Spinner';
 import { throttle } from 'lodash';
@@ -13,14 +17,18 @@ import useFetchThumbnails, {
 } from '../../hooks/useFetchThumbnails';
 import { useDispatch } from 'react-redux';
 import { addNewThumbnail } from '../../store/thumbnailSlice';
+import { newThumbnails } from '../../data/newthumbnails';
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch();
   let thumbnailsToAdd: ThumbnailData[] = [];
+  let initialCount = 0;
+  let clickCount = 0;
   const { images, loading } = useFetchThumbnails();
 
   const [documents, setDocuments] = useState<ThumbnailData[]>([]);
-  const [thumbnails_, setThumbnails_] = useState<ThumbnailData[]>(data);
+  const [thumbnails_, setThumbnails_] =
+    useState<ThumbnailData[]>(newThumbnails);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedCardTitle, setSelectedCardTitle] = useState<null | string>(
     null
@@ -45,21 +53,13 @@ const HomePage: React.FC = () => {
     setDocuments(reorderedItems);
   };
 
-  let clickCount = 0;
-
   const throttledAddThumbnail = throttle(
     (thumbnails: any) => {
-      for (let i = 0; i < clickCount; i++) {
+      for (let i = initialCount; i <= clickCount; i++) {
         thumbnailsToAdd.push(thumbnails[i]);
       }
-
       dispatch(addNewThumbnail(thumbnailsToAdd));
-      setThumbnails_((prev) => {
-        const updatedThumbnails = prev.slice(0, -1);
-        return updatedThumbnails;
-      });
-
-      clickCount = 0;
+      initialCount = clickCount;
     },
     delay,
     { leading: false, trailing: true }
@@ -194,8 +194,9 @@ const HomePage: React.FC = () => {
             alt: selectedCardTitle || '',
             title: selectedCardTitle || '',
           }}
-          onClose={() => setSelectedImage(null)}
+          searchKey={fullImages}
           position={selectedImage}
+          onClose={() => setSelectedImage(null)}
         />
       )}
     </div>

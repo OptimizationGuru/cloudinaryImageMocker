@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { initializeData, loadData } from '../utils/localStorageUtils';
-import { thumbnailImages } from '../constants';
+import { fullImages, thumbnailImages } from '../constants';
 import data from '../data/thumbnails.json';
+import fullImage from '../data/fullImages.json';
 
 export type ThumbnailData = {
   type: string;
@@ -12,6 +13,8 @@ export type ThumbnailData = {
 
 const useFetchThumbnails = () => {
   initializeData(thumbnailImages, data);
+  initializeData(fullImages, fullImage);
+
   const [images, setImages] = useState<ThumbnailData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

@@ -14,15 +14,17 @@ interface ZoomedCardProps {
     onClick?: () => void;
   };
   position: number;
+  searchKey: string;
   onClose: () => void;
 }
 
 const ZoomedCard: React.FC<ZoomedCardProps> = ({
   cardProps,
-  onClose,
   position,
+  searchKey,
+  onClose,
 }) => {
-  const { images, loading } = useFetchImages({ position });
+  const { images, loading } = useFetchImages({ position, searchKey });
 
   const [imageData, setImageData] = useState<ThumbnailData | null>(null);
 

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface ThumbnailData {
-  type: string;
+  type: string; // Set the default value to an empty string
   title: string;
   position: number;
   publicId: string;
@@ -9,14 +9,17 @@ export interface ThumbnailData {
 
 export interface ThumbnailState {
   thumbnails: ThumbnailData[];
-  loading: boolean;
-  error: string | null;
+  currentThumbnail: ThumbnailData;
 }
 
 const initialState: ThumbnailState = {
   thumbnails: [],
-  loading: false,
-  error: null,
+  currentThumbnail: {
+    type: '',
+    title: '',
+    position: 0,
+    publicId: '',
+  },
 };
 
 const thumbnailSlice = createSlice({
@@ -24,35 +27,22 @@ const thumbnailSlice = createSlice({
   initialState,
   reducers: {
     addNewThumbnail: (state, action: PayloadAction<ThumbnailData[]>) => {
-      state.thumbnails = [...state.thumbnails, ...action.payload];
+      const uniqueThumbnails = action.payload.filter((newThumbnail) => {
+        return !state.thumbnails.some(
+          (existingThumbnail) =>
+            existingThumbnail.publicId === newThumbnail.publicId
+        );
+      });
+
+      state.thumbnails = [...state.thumbnails, ...uniqueThumbnails];
     },
 
-    loadThumbnails: (state) => {
-      state.loading = false;
-    },
-
-    fetchThumbnails: (state) => {
-      state.loading = true;
-    },
-
-    fetchThumbnailsSuccess: (state, action: PayloadAction<ThumbnailData[]>) => {
-      state.thumbnails = action.payload;
-      state.loading = false;
-    },
-
-    fetchThumbnailsFailure: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
-      state.loading = false;
+    setCurrentThumbnail: (state, action: PayloadAction<ThumbnailData>) => {
+      state.currentThumbnail = action.payload;
     },
   },
 });
 
-export const {
-  addNewThumbnail,
-  fetchThumbnails,
-  fetchThumbnailsSuccess,
-  fetchThumbnailsFailure,
-  loadThumbnails,
-} = thumbnailSlice.actions;
+export const { addNewThumbnail, setCurrentThumbnail } = thumbnailSlice.actions;
 
 export default thumbnailSlice.reducer;

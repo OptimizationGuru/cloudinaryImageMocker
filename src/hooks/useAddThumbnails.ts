@@ -23,7 +23,6 @@ const useAddNewThumbnails = (newThumbnails: ThumbnailData[]) => {
   const pushNewThumbnailsApi = (
     newThumbnails: ThumbnailData[]
   ): Promise<ApiResponse<ThumbnailData[]>> => {
-    console.log(newThumbnails, 'newThumbnails');
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
