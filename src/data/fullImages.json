@@ -3,31 +3,31 @@
     "type": "bank-draft",
     "title": "Bank Draft",
     "position": 1,
-    "publicId": "samples/balloons"
+    "publicId": "c3ifmi2hyqvmlsozumua"
   },
   {
     "type": "bill-of-lading",
     "title": "Bill of Lading",
     "position": 2,
-    "publicId": "cld-sample-4"
+    "publicId": "bys47alok9cu8koi5moy"
   },
   {
     "type": "invoice-doc",
     "title": "Invoice",
     "position": 3,
-    "publicId": "cld-sample"
+    "publicId": "yw6xjdwyuulqhedaslyr"
   },
   {
     "type": "bank-draft-new",
     "title": "Bank Draft 2",
     "position": 4,
-    "publicId": "samples/man-portrait"
+    "publicId": "q1dnpzpbdp2ip4qf4vjr"
   },
 
   {
     "type": "bill-of-lading-new",
     "title": "Bill of Lading 2",
     "position": 5,
-    "publicId": "samples/smile"
+    "publicId": "vrvzne2q4frvl5dotsvu"
   }
 ]
