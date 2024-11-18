@@ -2,22 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../Card';
 import ZoomedCard from '../ZoomCard';
 import {
+  currentImage,
   newthumbnailImages,
   thumbnailHeight,
   thumbnailWidth,
 } from '../../constants';
 import updateDimensions from '../../utils/updateImageDimensions';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/thumbnails';
 import Spinnerr from '../Spinner';
+import { ThumbnailData } from '../../hooks/useFetchThumbnails';
+import { setCurrentThumbnail } from '../../store/thumbnailSlice';
 
 const NewThumbnails: React.FC = () => {
-  const { thumbnails, isLoading } = useSelector(
+  const dispatch = useDispatch();
+  const { thumbnails, isLoading, currentThumbnail } = useSelector(
     (state: RootState) => state.thumbnail
   );
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [allImages, setAllImages] = useState([...thumbnails]); // Ensure immutability
+  const [allImages, setAllImages] = useState([...thumbnails]);
   const [selectedCardTitle, setSelectedCardTitle] = useState<string | null>(
     null
   );
@@ -29,7 +33,7 @@ const NewThumbnails: React.FC = () => {
   useEffect(() => {
     const { width, height } = updateDimensions();
     setDimensions({ width, height });
-    setAllImages([...thumbnails]); // Safely update state with immutability
+    setAllImages([...thumbnails]);
 
     const handleResize = () => {
       const updatedDimensions = updateDimensions();
@@ -41,15 +45,11 @@ const NewThumbnails: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize); // Cleanup event listener
   }, [thumbnails]);
 
-  const setCardData = ({
-    position,
-    title,
-  }: {
-    position: number;
-    title: string;
-  }) => {
-    setSelectedImage(position);
-    setSelectedCardTitle(title);
+  const setCardData = async ({ doc }: { doc: ThumbnailData }) => {
+    setSelectedImage(doc.position);
+    setSelectedCardTitle(doc.title);
+
+    await dispatch(setCurrentThumbnail(doc));
   };
 
   if (isLoading) {
@@ -69,7 +69,7 @@ const NewThumbnails: React.FC = () => {
           <div
             key={doc?.type}
             className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
-            onClick={() => setCardData(doc)}
+            onClick={() => setCardData({ doc })}
           >
             <Card
               title={doc?.title}
@@ -95,7 +95,7 @@ const NewThumbnails: React.FC = () => {
             title: selectedCardTitle || '',
           }}
           position={selectedImage}
-          searchKey={newthumbnailImages}
+          searchKey={currentImage}
           onClose={() => setSelectedImage(null)}
         />
       )}

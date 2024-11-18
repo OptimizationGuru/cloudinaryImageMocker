@@ -5,7 +5,7 @@ import {
   loadDataFromLocal,
 } from '../utils/localStorageUtils';
 import { ThumbnailData } from './useFetchThumbnails';
-import { newthumbnailImages } from '../constants';
+import { currentImage, newthumbnailImages } from '../constants';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/thumbnails';
 
@@ -20,7 +20,9 @@ const useFetchImages = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { thumbnails } = useSelector((state: RootState) => state.thumbnail);
+  const { thumbnails, currentThumbnail } = useSelector(
+    (state: RootState) => state.thumbnail
+  );
 
   interface ApiResponse<T> {
     status: number;
@@ -33,11 +35,13 @@ const useFetchImages = ({
   > => {
     initializeData(newthumbnailImages, thumbnails);
     return new Promise((resolve, reject) => {
-      let data: any;
+      let data: any = [];
       setTimeout(() => {
         try {
-          if (searchKey === newthumbnailImages) {
-            data = loadDataFromLocal(searchKey);
+          if (searchKey === currentImage) {
+            data = [currentThumbnail];
+          } else if (searchKey === newthumbnailImages) {
+            data = loadDataFromLocal(searchKey) || null;
           } else {
             data = loadData(searchKey);
           }
@@ -54,7 +58,7 @@ const useFetchImages = ({
             data: [],
           });
         }
-      }, 2000);
+      }, 1000);
     });
   };
 
@@ -65,6 +69,7 @@ const useFetchImages = ({
 
       try {
         const response = await fetchImagesbyPositionApi();
+
         setImages(response.data.filter((image) => image.position === position));
       } catch (err: any) {
         console.error('Caught error:', err.message);
@@ -75,7 +80,7 @@ const useFetchImages = ({
     };
 
     fetchImages();
-  }, []);
+  }, [position, searchKey, thumbnails, currentThumbnail]);
 
   return { images, loading, error };
 };
