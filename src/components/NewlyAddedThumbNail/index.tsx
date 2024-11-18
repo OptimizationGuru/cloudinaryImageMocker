@@ -55,11 +55,11 @@ const NewThumbnails: React.FC = () => {
     );
   }
   return allImages.length ? (
-    <div className="shadow-xl w-screen h-auto min-h-screen mt-2 flex flex-col items-center justify-center px-4">
-      <div className="text-xl text-white rounded-lg bg-transparent bg-gradient-to-r from-blue-700 to-red-500 px-4 py-2">
+    <div className="w-full flex flex-col items-center justify-center px-4">
+      <div className="text-xl text-white rounded-lg bg-transparent bg-gradient-to-r from-blue-700 to-red-500 px-4 py-2 my-4">
         Newly Added Thumbnails
       </div>
-      <div className="flex flex-wrap gap-4 justify-center my-12">
+      <div className="flex flex-wrap gap-4 justify-center my-6 w-full">
         {allImages.map((doc) => (
           <div
             key={doc?.type}

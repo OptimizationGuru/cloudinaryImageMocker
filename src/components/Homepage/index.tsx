@@ -96,11 +96,11 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <div className="w-screen h-auto min-h-screen p-4">
+    <div className="w-full min-h-screen p-4">
       <button
         id="saveButton"
         type="button"
-        className="text-white my-8 text-xl bg-transparent bg-gradient-to-r from-blue-700 to-red-500  focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg  px-5 py-2.5 text-center mx-auto block"
+        className="text-white my-8 text-xl bg-gradient-to-r from-blue-700 to-red-500 focus:ring-4 focus:outline-none focus:ring-pink-200 font-medium rounded-lg px-5 py-2.5 text-center block mx-auto"
         onClick={handleClick}
       >
         Add Thumbnail
@@ -112,75 +112,29 @@ const HomePage: React.FC = () => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="grid gap-4 justify-center items-center h-[100%] md:gap-6"
+              className="grid gap-4 justify-center items-center w-full sm:grid-cols-2 lg:grid-cols-3"
             >
-              {/* Row 1: 3 Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-center w-full">
-                {documents.slice(0, 3).map((doc, index) => (
-                  <Draggable
-                    key={doc.type}
-                    draggableId={doc.type}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
-                        onClick={() => {
-                          setCardData(doc);
-                        }}
-                      >
-                        <Card
-                          title={doc.title}
-                          publicId={doc.publicId}
-                          width={thumbnailWidth}
-                          height={thumbnailHeight}
-                          alt={'thumbnail'}
-                          onClick={() => {
-                            setSelectedImage(doc.position);
-                          }}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-              </div>
-
-              {/* Row 2: 2 Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-center w-full place-items-center">
-                {documents.slice(3, 5).map((doc, index) => (
-                  <Draggable
-                    key={doc.type}
-                    draggableId={doc.type}
-                    index={index + 3}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
-                        onClick={() => {
-                          setSelectedImage(doc.position);
-                        }}
-                      >
-                        <Card
-                          title={doc.title}
-                          publicId={doc.publicId}
-                          width={thumbnailWidth}
-                          height={thumbnailHeight}
-                          alt={'thumbnail'}
-                          onClick={() => {
-                            setSelectedImage(doc.position);
-                          }}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-              </div>
+              {documents.map((doc, index) => (
+                <Draggable key={doc.type} draggableId={doc.type} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
+                      onClick={() => setCardData(doc)}
+                    >
+                      <Card
+                        title={doc.title}
+                        publicId={doc.publicId}
+                        width={thumbnailWidth}
+                        height={thumbnailHeight}
+                        alt={'thumbnail'}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
               {provided.placeholder}
             </div>
           )}
@@ -196,8 +150,8 @@ const HomePage: React.FC = () => {
             alt: selectedCardTitle || '',
             title: selectedCardTitle || '',
           }}
-          searchKey={fullImages}
           position={selectedImage}
+          searchKey={fullImages}
           onClose={() => setSelectedImage(null)}
         />
       )}
