@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../Card';
 import ZoomedCard from '../ZoomCard';
-import {
-  currentImage,
-  newthumbnailImages,
-  thumbnailHeight,
-  thumbnailWidth,
-} from '../../constants';
+import { currentImage, thumbnailHeight, thumbnailWidth } from '../../constants';
 import updateDimensions from '../../utils/updateImageDimensions';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/thumbnails';
@@ -16,7 +11,7 @@ import { setCurrentThumbnail } from '../../store/thumbnailSlice';
 
 const NewThumbnails: React.FC = () => {
   const dispatch = useDispatch();
-  const { thumbnails, isLoading, currentThumbnail } = useSelector(
+  const { thumbnails, isLoading } = useSelector(
     (state: RootState) => state.thumbnail
   );
 
@@ -42,7 +37,7 @@ const NewThumbnails: React.FC = () => {
 
     window.addEventListener('resize', handleResize);
 
-    return () => window.removeEventListener('resize', handleResize); // Cleanup event listener
+    return () => window.removeEventListener('resize', handleResize);
   }, [thumbnails]);
 
   const setCardData = async ({ doc }: { doc: ThumbnailData }) => {
