@@ -9,7 +9,9 @@ import { Provider } from 'react-redux';
 const Index: React.FC = () => {
   return (
     <Provider store={store}>
-      <App />
+      <div className="bg-gray-200 min-h-screen">
+        <App />
+      </div>
     </Provider>
   );
 };

@@ -9,13 +9,15 @@ import {
 import updateDimensions from '../../utils/updateImageDimensions';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/thumbnails';
+import Spinnerr from '../Spinner';
 
 const NewThumbnails: React.FC = () => {
-  const { thumbnails } = useSelector((state: RootState) => state.thumbnail);
+  const { thumbnails, isLoading } = useSelector(
+    (state: RootState) => state.thumbnail
+  );
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [allImages, setAllImages] = useState(thumbnails);
-
+  const [allImages, setAllImages] = useState([...thumbnails]); // Ensure immutability
   const [selectedCardTitle, setSelectedCardTitle] = useState<string | null>(
     null
   );
@@ -27,10 +29,16 @@ const NewThumbnails: React.FC = () => {
   useEffect(() => {
     const { width, height } = updateDimensions();
     setDimensions({ width, height });
-    window.addEventListener('resize', updateDimensions);
-    setAllImages(thumbnails);
+    setAllImages([...thumbnails]); // Safely update state with immutability
 
-    return () => window.removeEventListener('resize', updateDimensions);
+    const handleResize = () => {
+      const updatedDimensions = updateDimensions();
+      setDimensions(updatedDimensions);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize); // Cleanup event listener
   }, [thumbnails]);
 
   const setCardData = ({
@@ -44,12 +52,19 @@ const NewThumbnails: React.FC = () => {
     setSelectedCardTitle(title);
   };
 
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
+        <Spinnerr isSaving={true} />
+      </div>
+    );
+  }
   return allImages.length ? (
-    <div className="shadow-xl w-screen h-auto min-h-screen flex flex-col items-center justify-center px-4">
-      <div className="text-xl text-white rounded-lg bg-transparent bg-gradient-to-r from-blue-700 to-red-500 px-4 py-2 my-4">
+    <div className="shadow-xl w-screen h-auto min-h-screen mt-2 flex flex-col items-center justify-center px-4">
+      <div className="text-xl text-white rounded-lg bg-transparent bg-gradient-to-r from-blue-700 to-red-500 px-4 py-2">
         Newly Added Thumbnails
       </div>
-      <div className="flex flex-wrap gap-2 sm:gap-4 justify-center my-6">
+      <div className="flex flex-wrap gap-4 justify-center my-12">
         {allImages.map((doc) => (
           <div
             key={doc?.type}

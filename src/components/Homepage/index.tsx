@@ -18,17 +18,16 @@ import useFetchThumbnails, {
 import { useDispatch } from 'react-redux';
 import { addNewThumbnail } from '../../store/thumbnailSlice';
 import { newThumbnails } from '../../data/newthumbnails';
+import { AppDispatch } from '../../store/thumbnails';
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch();
-  let thumbnailsToAdd: ThumbnailData[] = [];
   let initialCount = 0;
   let clickCount = 0;
   const { images, loading } = useFetchThumbnails();
 
   const [documents, setDocuments] = useState<ThumbnailData[]>([]);
-  const [thumbnails_, setThumbnails_] =
-    useState<ThumbnailData[]>(newThumbnails);
+  const [thumbnails_] = useState<ThumbnailData[]>(newThumbnails);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedCardTitle, setSelectedCardTitle] = useState<null | string>(
     null
@@ -54,11 +53,14 @@ const HomePage: React.FC = () => {
   };
 
   const throttledAddThumbnail = throttle(
-    (thumbnails: any) => {
+    async (thumbnails: ThumbnailData[], dispatch: AppDispatch) => {
+      const thumbnailsToAdd: ThumbnailData[] = [];
       for (let i = initialCount; i <= clickCount; i++) {
         thumbnailsToAdd.push(thumbnails[i]);
       }
-      dispatch(addNewThumbnail(thumbnailsToAdd));
+
+      await dispatch(addNewThumbnail(thumbnailsToAdd));
+
       initialCount = clickCount;
     },
     delay,
@@ -67,7 +69,7 @@ const HomePage: React.FC = () => {
 
   const handleClick = () => {
     ++clickCount;
-    throttledAddThumbnail(thumbnails_);
+    throttledAddThumbnail(thumbnails_, dispatch);
   };
 
   const setCardData = ({

@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 export interface ThumbnailData {
-  type: string; // Set the default value to an empty string
+  type: string;
   title: string;
   position: number;
   publicId: string;
@@ -10,6 +10,7 @@ export interface ThumbnailData {
 export interface ThumbnailState {
   thumbnails: ThumbnailData[];
   currentThumbnail: ThumbnailData;
+  isLoading: boolean;
 }
 
 const initialState: ThumbnailState = {
@@ -20,29 +21,53 @@ const initialState: ThumbnailState = {
     position: 0,
     publicId: '',
   },
+  isLoading: false,
 };
+
+export const addNewThumbnail = createAsyncThunk(
+  'thumbnails/addNewThumbnail',
+  async (newThumbnails: ThumbnailData[], { getState }) => {
+    const state = getState() as { thumbnail: ThumbnailState };
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const uniqueThumbnails = newThumbnails.filter((newThumbnail) => {
+      return !state.thumbnail.thumbnails.some(
+        (existingThumbnail) =>
+          existingThumbnail.publicId === newThumbnail.publicId
+      );
+    });
+
+    return uniqueThumbnails;
+  }
+);
 
 const thumbnailSlice = createSlice({
   name: 'thumbnails',
   initialState,
   reducers: {
-    addNewThumbnail: (state, action: PayloadAction<ThumbnailData[]>) => {
-      const uniqueThumbnails = action.payload.filter((newThumbnail) => {
-        return !state.thumbnails.some(
-          (existingThumbnail) =>
-            existingThumbnail.publicId === newThumbnail.publicId
-        );
-      });
-
-      state.thumbnails = [...state.thumbnails, ...uniqueThumbnails];
-    },
-
     setCurrentThumbnail: (state, action: PayloadAction<ThumbnailData>) => {
       state.currentThumbnail = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(addNewThumbnail.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(
+        addNewThumbnail.fulfilled,
+        (state, action: PayloadAction<ThumbnailData[]>) => {
+          state.thumbnails = [...state.thumbnails, ...action.payload];
+          state.isLoading = false;
+        }
+      )
+      .addCase(addNewThumbnail.rejected, (state) => {
+        state.isLoading = false;
+      });
+  },
 });
 
-export const { addNewThumbnail, setCurrentThumbnail } = thumbnailSlice.actions;
+export const { setCurrentThumbnail } = thumbnailSlice.actions;
 
 export default thumbnailSlice.reducer;
