@@ -94,11 +94,11 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <div className="w-screen h-screen min-h-screen p-4">
+    <div className="w-screen h-auto min-h-screen p-4">
       <button
         id="saveButton"
         type="button"
-        className="text-white text-xl bg-transparent bg-gradient-to-r from-blue-700 to-red-500  focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg  px-5 py-2.5 text-center mx-auto block"
+        className="text-white my-8 text-xl bg-transparent bg-gradient-to-r from-blue-700 to-red-500  focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg  px-5 py-2.5 text-center mx-auto block"
         onClick={handleClick}
       >
         Add Thumbnail
@@ -110,10 +110,10 @@ const HomePage: React.FC = () => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="grid gap-4 justify-center items-center h-[100%]"
+              className="grid gap-4 justify-center items-center h-[100%] md:gap-6"
             >
               {/* Row 1: 3 Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-center w-full my-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-center w-full">
                 {documents.slice(0, 3).map((doc, index) => (
                   <Draggable
                     key={doc.type}
